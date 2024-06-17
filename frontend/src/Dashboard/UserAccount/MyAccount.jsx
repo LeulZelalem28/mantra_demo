@@ -9,7 +9,7 @@ const MyAccount = () => {
   const [tab, setTab] = useState('settings'); 
   const { id } = useParams();
   const navigate = useNavigate();
-  const { setAccessToken, setUserRole, setUserName } = useGlobalState();
+  const { setAccessToken, userRole, setUserRole, setUserName } = useGlobalState();
   const [therapist, setTherapist] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -17,6 +17,7 @@ const MyAccount = () => {
   useEffect(() => {
     const fetchTherapist = async () => {
       try {
+        console.log('role', userRole)
         setLoading(true);
         const response = await fetch(`http://localhost:3500/therapists/${id}`);
         if (!response.ok) {
@@ -37,7 +38,8 @@ const MyAccount = () => {
   const handleDelete = async () => {
     try {
       const response = await fetch(`http://localhost:3500/therapists/${id}`, {
-        method: 'DELETE'
+        method: 'DELETE',
+        
       });
       if (!response.ok) {
         throw new Error('Failed to delete therapist');

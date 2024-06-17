@@ -1,27 +1,24 @@
 import { useState } from 'react';
 
-const Profile = () => {
+const Profile = ({therapist}) => {
   const [selectedFile, setSelectedFile] = useState(null);
 
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
+    name: therapist.name || '',
+    email: therapist.email || '',
     password: '',
-    photo: 'null',
-    gender: '',
-    bloodType: '',
-    address: '',
-    specialization: '',
-    experience: '',
-    education: '',
-    description: '',
-    aboutDesc: '',
-    educationDesc: '',
-    experienceDesc: '',
-    specializationDesc: '',
-    dob: '',
-    phoneNumber: '',
-    username: '',
+    photo: therapist.profilePic ||'null',
+    address: therapist.address || '',
+    specialization: therapist.specialization || '',
+    experience: therapist.experience || '',
+    education: therapist.education || '',
+    aboutDesc: therapist.description.about || '' ,
+    educationDesc: therapist.description.education || '',
+    experienceDesc: therapist.description.experience || '',
+    specializationDesc: therapist.description.specialization || '',
+    dob: therapist.dateOfBirth || '',
+    phoneNumber: therapist.phoneNumber || '',
+    username: therapist.username || '',
   });
 
   const handleInputChange = (e) => {
@@ -35,6 +32,23 @@ const Profile = () => {
 
   const submitHandler = async (event) => {
     event.preventDefault();
+    try {
+      const config = {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      };
+
+      const response = await fetch(`http://localhost:3500/therapists/${therapist.therapistId}`, config);
+      const data = await response.json();
+
+      console.log(data); 
+
+    } catch (error) {
+      console.error('Failed to update therapist: ', error);
+    }
   };
 
   return (
