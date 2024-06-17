@@ -7,18 +7,19 @@ import {
 } from "react-router-dom";
 import { FaUser,FaKey} from "react-icons/fa";
 import { GrMail } from "react-icons/gr";
-import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import PasswordInput from '../PasswordInput/PasswordInput';
 import IconComponent from '../IconComponent/IconComponent';
 import './Signup_Login_Form.css';
+import { useGlobalState } from '../../provider/GlobalStateProvider';
 import RenderPatientSignupStep from './RenderPatientSignupStep';
 import RenderTherapistSignupStep from './RenderTherapistSignupStep';
 // import { navigate } from '@reach/router';
 
 
-const Signup_Login_Form = ({setUserName, setAccessToken, accessToken, setUserRole}) => {
+const Signup_Login_Form = () => {
+  const { accessToken, setAccessToken, userRole, setUserRole, setUserName } = useGlobalState();
   const [isSignUpMode, setIsSignUpMode] = useState(false);
   const [isForgotPassMode, setIsForgotPassMode] = useState(false);
   const [isEmailverified, setIsEmailverified] = useState(false);
@@ -173,7 +174,7 @@ const handleTherapistRegistration = async (e) => {
         setAccessToken(responseData.accessToken);
         setUserName(responseData.username);
         console.log(responseData.username)
-        navigate('/appointments');
+        navigate('/home');
       }
 
       console.log(accessToken)
