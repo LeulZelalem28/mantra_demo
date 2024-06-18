@@ -19,7 +19,7 @@ import RenderTherapistSignupStep from './RenderTherapistSignupStep';
 
 
 const Signup_Login_Form = () => {
-  const { accessToken, setAccessToken, userRole, setUserRole, setUserName } = useGlobalState();
+  const { accessToken, setAccessToken, userRole, setUserRole, setUserName, userId, setUserId } = useGlobalState();
   const [isSignUpMode, setIsSignUpMode] = useState(false);
   const [isForgotPassMode, setIsForgotPassMode] = useState(false);
   const [isEmailverified, setIsEmailverified] = useState(false);
@@ -173,7 +173,11 @@ const handleTherapistRegistration = async (e) => {
         setUserRole(responseData.role);
         setAccessToken(responseData.accessToken);
         setUserName(responseData.username);
-        console.log(responseData.username)
+        setUserId(response.userId);
+        console.log(responseData.userId)
+        if(responseData.role == 'Administrator') {
+          navigate('/admin');
+        }
         navigate('/home');
       }
 

@@ -9,6 +9,7 @@ export const GlobalStateProvider = ({ children }) => {
   const [accessToken, setAccessToken] = useState(localStorage.getItem('accessToken') || '');
   const [userRole, setUserRole] = useState(localStorage.getItem('roles') || '');
   const [username, setUserName] = useState(localStorage.getItem('username') || '');
+  const [userId, setUserId] = useState(localStorage.getItem('userId') || '');
 
   useEffect(() => {
     localStorage.setItem('accessToken', accessToken);
@@ -22,8 +23,12 @@ export const GlobalStateProvider = ({ children }) => {
     localStorage.setItem('roles', userRole);
   }, [userRole]);
 
+  useEffect(() => {
+    localStorage.setItem('userId', userId);
+  }, [userId]);
+
   return (
-    <GlobalStateContext.Provider value={{ accessToken, setAccessToken, userRole, setUserRole, username, setUserName }}>
+    <GlobalStateContext.Provider value={{ accessToken, setAccessToken, userRole, setUserRole, username, setUserName, userId, setUserId }}>
       {children}
     </GlobalStateContext.Provider>
   );

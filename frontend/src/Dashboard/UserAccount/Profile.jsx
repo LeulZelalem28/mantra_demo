@@ -1,18 +1,22 @@
 import { useState } from 'react';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import ClipLoader from 'react-spinners/ClipLoader';
 
-const Profile = ({therapist}) => {
+const Profile = ({ therapist }) => {
   const [selectedFile, setSelectedFile] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const [formData, setFormData] = useState({
     name: therapist.name || '',
     email: therapist.email || '',
     password: '',
-    photo: therapist.profilePic ||'null',
+    photo: therapist.profilePic || 'null',
     address: therapist.address || '',
     specialization: therapist.specialization || '',
     experience: therapist.experience || '',
     education: therapist.education || '',
-    aboutDesc: therapist.description.about || '' ,
+    aboutDesc: therapist.description.about || '',
     educationDesc: therapist.description.education || '',
     experienceDesc: therapist.description.experience || '',
     specializationDesc: therapist.description.specialization || '',
@@ -25,34 +29,61 @@ const Profile = ({therapist}) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleFileInputChange = async (event) => {
+  const handleFileInputChange = (event) => {
     const file = event.target.files[0];
-    console.log(file);
+    console.log('File selected:', file);
+    if (file) {
+      setSelectedFile(file);
+    } else {
+      setSelectedFile(null);
+    }
   };
+  
 
   const submitHandler = async (event) => {
     event.preventDefault();
+    setLoading(true);
     try {
+      const dataToSend = new FormData();
+
+      // Append all form data
+      for (const key in formData) {
+        dataToSend.append(key, formData[key]);
+      }
+
+      // Append the selected file
+      if (selectedFile) {
+        dataToSend.append('profilePic', selectedFile);
+      }
+
       const config = {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
+        body: dataToSend,
       };
 
       const response = await fetch(`http://localhost:3500/therapists/${therapist.therapistId}`, config);
       const data = await response.json();
 
-      console.log(data); 
-
+      if (response.ok) {
+        toast.success('Profile updated successfully');
+      } else {
+        toast.error('Failed to update profile');
+      }
     } catch (error) {
-      console.error('Failed to update therapist: ', error);
+      toast.error('Failed to update profile');
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div>
+    <div className="relative">
+      <ToastContainer />
+      {loading && (
+        <div className="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-50 z-50">
+          <ClipLoader color="#ffffff" loading={loading} size={150} />
+        </div>
+      )}
       <form onSubmit={submitHandler}>
         <div className="mb-5">
           <input
@@ -79,12 +110,11 @@ const Profile = ({therapist}) => {
         <div className="mb-5">
           <input
             type="password"
-            placeholder="Enter Your password"
+            placeholder="Enter Changed password"
             name="password"
             value={formData.password}
             onChange={handleInputChange}
             className="w-full pr-3 px-4 py-3 border-b border-solid border-[#0066ff61] focus:outline-none focus:border-b-primaryColor text-[22px] leading-7 text-leadingColor placeholder:text-textColor rounded-md cursor-pointer"
-            required
           />
         </div>
         <div className="mb-5 flex items-center gap-3">
@@ -195,8 +225,6 @@ const Profile = ({therapist}) => {
             className="w-full pr-3 px-4 py-3 border-b border-solid border-[#0066ff61] focus:outline-none focus:border-b-primaryColor text-[22px] leading-7 text-leadingColor placeholder:text-textColor rounded-md cursor-pointer resize-none"
           ></textarea>
         </div>
-        {/* End of Additional Fields */}
-
         <div className="mt-7">
           <button type="submit" className="w-full bg-primaryColor text-white text-[18px] leading-[30px] rounded-lg  py-3">
             Update

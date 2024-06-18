@@ -7,6 +7,7 @@ import Feedback from './Feedback';
 import SidePanel from './SidePanel';
 import { Link } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
+import { ToastContainer, toast } from 'react-toastify';
 
 
 
@@ -86,13 +87,14 @@ const DoctorDetails = () => {
 
   return (
     <section>
+      <ToastContainer />
       <div className="max-w-[1170px] px-5 mx-auto">
         <div className="grid md:grid-cols-3 gap-[50px]">
           <div className="md:col-span-2">
             <div className="flex items-center gap-5">
               <figure className='max-w-[200px] max-h-[200px]'>
                 {username === therapist.username ? (
-                  <Link to={`/users/profile/${therapist.therapistId}`}>
+                  <Link to={`/therapists/profile/${therapist.therapistId}`}>
                     <img src={profilePic} alt="" className='w-[180px]'/>
                   </Link>
                 ) : (
