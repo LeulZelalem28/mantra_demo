@@ -1,6 +1,6 @@
-/* ApprovalPage.css */
+/* Approve.css */
 
-  .approval-page {
+.approve-page {
     max-width: 800px;
     margin: 50px auto;
     padding: 20px;
@@ -9,7 +9,7 @@
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   }
   
-  .approval-page h2 {
+  .approve-page h2 {
     font-size: 28px;
     font-weight: bold;
     color: #333;
@@ -17,30 +17,22 @@
     text-align: center;
   }
   
-  .therapist-list {
+  .therapist-details {
     display: flex;
     flex-direction: column;
     gap: 20px;
   }
   
-  .therapist-card {
-    display: flex;
-    align-items: center;
-    padding: 20px;
-    background-color: #f7f8fc;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  }
-  
   .profile-pic {
-    width: 80px;
-    height: 80px;
+    width: 100px;
+    height: 100px;
     border-radius: 50%;
     overflow: hidden;
     background-color: #e0e0e0;
     display: flex;
     justify-content: center;
     align-items: center;
+    margin: 0 auto 20px auto;
   }
   
   .profile-pic img {
@@ -59,14 +51,23 @@
     color: #666;
   }
   
-  .therapist-details {
-    flex-grow: 1;
-    margin-left: 20px;
-  }
-  
   .therapist-details p {
     margin: 5px 0;
     font-size: 16px;
+  }
+  
+  .certificate, .license {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 10px;
+  }
+  
+  .certificate img, .license img {
+    max-width: 300px;
+    max-height: 200px;
+    object-fit: contain;
+    margin-top: 5px;
   }
   
   .approve-btn {
@@ -80,10 +81,18 @@
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s;
-    margin-top: 10px;
+    margin-top: 20px;
+    align-self: center;
   }
   
   .approve-btn:hover {
     background-color: #0056b3;
+  }
+  
+  .loader-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
   }
   

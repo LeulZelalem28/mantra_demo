@@ -18,7 +18,7 @@ const MyAccount = () => {
     const fetchTherapist = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`http://localhost:3500/therapists/${id}`);
+        const response = await fetch(`http://localhost:3500/therapists/userId/${id}`);
         if (!response.ok) {
           throw new Error('Failed to fetch therapist');
         }

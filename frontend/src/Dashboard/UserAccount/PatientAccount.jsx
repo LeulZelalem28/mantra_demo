@@ -17,7 +17,7 @@ const PatientAccount = () => {
     const fetchPatient = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`http://localhost:3500/patients/${id}`);
+        const response = await fetch(`http://localhost:3500/patients/userId/${id}`);
         if (!response.ok) {
           throw new Error('Failed to fetch patient');
         }

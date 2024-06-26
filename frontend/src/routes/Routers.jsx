@@ -36,6 +36,7 @@ import ResourceDetailPage from '../blog/ResourceDetailPage'
 import MyResourcePage from '../blog/MyResourcePage'
 import Room from '../Room'
 import TextChat from '../TextChat/TextChat'
+import Schedule from '../pages/Doctors/SidePanel';
 
 
 const Routers = ({ socket }) => {
@@ -43,7 +44,7 @@ const Routers = ({ socket }) => {
 
   return (
     <Routes>
-         <Route path="/" element={<Home/>}/>
+         <Route path="/" element={<Signup_Login_Form hideHeader={true}/>}/>
     <Route path="/home" element={<Home/>}/>
     <Route path="/doctor" element={<Doctors/>}/>
     <Route path="/doctor/:id" element={<DoctorDetails/>}/>
@@ -63,6 +64,7 @@ const Routers = ({ socket }) => {
       <Route path="/create/resources" element={<CreateResource accessToken={accessToken} />} />
       <Route path="/myresources" element={<MyResourcePage username={username} accessToken={accessToken} />} />
       <Route path="/room/text/:roomId" element={<TextChat userRole={userRole} username={username} accessToken={accessToken} socket={socket} />} />
+      {/* <Route path="/schedule" element={<Schedule />} /> */}
 
     {/* <Route path="/users/profiles/me" element={<Dashboard/>}/> */}
       {/* <Route path="/" element={<Signup_Login_Form setUserName={setUserName} accessToken={accessToken} setAccessToken={setAccessToken} setUserRole={setUserRole} />} />

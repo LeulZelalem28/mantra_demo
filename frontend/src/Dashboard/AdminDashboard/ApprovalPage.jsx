@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import ClipLoader from 'react-spinners/ClipLoader';
 import './ApprovalPage.css';
 
-const ApprovalPage = () => {
+const ApprovalPage = ({ onTherapistSelect }) => {
   const [unapprovedTherapists, setUnapprovedTherapists] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -25,23 +25,6 @@ const ApprovalPage = () => {
 
     fetchUnapprovedTherapists();
   }, []);
-
-  const approveTherapist = async (therapistId) => {
-    try {
-      const response = await fetch(`http://localhost:3500/therapists/${therapistId}/approve`, {
-        method: 'PATCH',
-      });
-      if (response.ok) {
-        setUnapprovedTherapists((prevTherapists) =>
-          prevTherapists.filter((therapist) => therapist.therapistId !== therapistId)
-        );
-      } else {
-        console.error('Failed to approve therapist');
-      }
-    } catch (error) {
-      console.error('Error approving therapist', error);
-    }
-  };
 
   const setProfilePicData = (data) => {
     if (!data || !data.profilePic) {
@@ -88,7 +71,7 @@ const ApprovalPage = () => {
       <h2>Unapproved Therapists</h2>
       <div className="therapist-list">
         {unapprovedTherapists.map((therapist) => (
-          <div key={therapist.therapistId} className="therapist-card">
+          <div key={therapist.therapistId} className="therapist-card" onClick={() => onTherapistSelect(therapist.therapistId)}>
             <div className="profile-pic">
               {therapist.profilePic ? (
                 <img src={setProfilePicData(therapist)} alt="Profile Pic" />
@@ -100,7 +83,6 @@ const ApprovalPage = () => {
               <p><strong>Name:</strong> {therapist.name}</p>
               <p><strong>Email:</strong> {therapist.email}</p>
               <p><strong>Specialization:</strong> {therapist.specialization}</p>
-              <button className="approve-btn" onClick={() => approveTherapist(therapist.therapistId)}>Approve</button>
             </div>
           </div>
         ))}

@@ -34,6 +34,7 @@ const Header = () => {
 
   const open = Boolean(anchorEl);
   const openTwo = Boolean(anchorElTwo);
+  const id = localStorage.getItem('userId')
 
   const handleLogout = () => {
     // Clearing local storage
@@ -168,7 +169,20 @@ const Header = () => {
                     </NavLink>
                   )}
                 </li>
+                
               ))}
+               <li>
+                <NavLink
+                  to={`/patients/profile/${id}`}
+                  className={(navClass) =>
+                    navClass.isActive
+                      ? 'text-primaryColor text-[16px] leading-7 font-[600]'
+                      : 'text-textColor text-[16px] leading-7 font-[500] hover:text-primaryColor'
+                  }
+                >
+                  My Profile
+                </NavLink>
+              </li>
             </ul>
           </div>
 

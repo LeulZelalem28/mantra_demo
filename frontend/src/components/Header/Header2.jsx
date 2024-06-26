@@ -29,6 +29,7 @@ const Header = () => {
   const [anchorElTwo, setAnchorElTwo] = useState(null);
   const navigate = useNavigate();
   const {setAccessToken, setUserRole, setUserName} = useGlobalState()
+  const id = localStorage.getItem('userId')
 
   const open = Boolean(anchorEl);
   const openTwo = Boolean(anchorElTwo);
@@ -192,6 +193,18 @@ const Header = () => {
                   )}
                 </li>
               ))}
+              <li>
+                <NavLink
+                  to={`/therapists/profile/${id}`}
+                  className={(navClass) =>
+                    navClass.isActive
+                      ? 'text-primaryColor text-[16px] leading-7 font-[600]'
+                      : 'text-textColor text-[16px] leading-7 font-[500] hover:text-primaryColor'
+                  }
+                >
+                  My Profile
+                </NavLink>
+              </li>
             </ul>
           </div>
 

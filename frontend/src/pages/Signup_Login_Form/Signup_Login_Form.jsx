@@ -170,14 +170,21 @@ const handleTherapistRegistration = async (e) => {
       const responseData = await response.json();
       
       if(response.ok){
+        
+        localStorage.setItem('username', responseData.username);
+        localStorage.setItem('roles', responseData.role);
+        localStorage.setItem('userId', response.userId);
         setUserRole(responseData.role);
         setAccessToken(responseData.accessToken);
         setUserName(responseData.username);
-        setUserId(response.userId);
+        setUserId(responseData.userId);
         console.log(responseData.userId)
-        if(responseData.role == 'Administrator') {
+        console.log(username)
+        
+        if(responseData.role == 'Admin') {
           navigate('/admin');
-        }
+        } 
+        if(responseData.role == 'Therapist' || responseData.role == 'Patient')
         navigate('/home');
       }
 

@@ -41,12 +41,12 @@ const CreateAdministratorPage = () => {
         method: 'POST',
         body: formDataToSubmit,
       });
-
+      const data = await response.json()
       if (!response.ok) {
-        toast.success('Administrator created successfully');
+        toast.info(data.message);
       }
-
-      toast.success('Administrator created successfully');
+      if(response.ok)
+      {toast.success('Administrator created successfully');}
     } catch (error) {
       toast.error('Failed to create administrator');
     } finally {

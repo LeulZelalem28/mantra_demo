@@ -235,7 +235,7 @@ const ForumCard = ({ accessToken, forum, errorMessage, setErrorMessage, onClick,
           <span onClick={() => commentOnClick(forum.forumId)}>
             <AiOutlineComment /> {/* Corrected indentation */}
           </span>
-          <span style={{ color: userHasLiked ? 'red' : '#ccc' }} onClick={handleLike}>
+          <span style={{ color: userHasLiked ? 'red' : '#ccc', background: userHasLiked ? 'lightblue' : '#ccc' }} onClick={handleLike}>
             <AiOutlineHeart /> {forum.likes}
           </span>
         </div>

@@ -45,11 +45,15 @@
 }
 
 .forum-meta div span {
-  margin-right: 10px;
+  display: flex;
+  margin-right: 20px;
   font-size: 20px;
   border: 2px solid #ccc;
-  padding: 2px;
-  border-radius: 5px;
+  padding: 10px;
+  border-radius: 7px;
+}
+.forum-meta div {
+  display: flex;
 }
 
 .forum-user-info {
