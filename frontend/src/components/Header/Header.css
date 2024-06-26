@@ -17,3 +17,16 @@
 .dropdown-content a:hover {
   background-color: #0056b3; /* Darker shade on hover, adjust as needed */
 }
+
+
+/* Ensure the navigation bar is at a lower z-index */
+.navigation {
+  position: relative; /* Ensure it can have a z-index */
+  z-index: 1;
+}
+
+/* Ensure the dropdown menus are at a higher z-index */
+.menu .MuiMenu-root {
+  position: absolute; /* Ensure it can have a z-index */
+  z-index: 1000; /* Higher than the navigation bar */
+}

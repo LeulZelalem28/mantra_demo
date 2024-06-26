@@ -18,18 +18,19 @@ const Layout = () => {
   const isRoomPage = pathname.startsWith('/room/video/');
   const isTextPage = pathname.startsWith('/room/text/');
   const isAdminPage = pathname.startsWith('/admin');
+  const isLoginPage = pathname === '/' || pathname === '/login';
 
   return (
     <>
       <GlobalStateProvider>
-        {!isRoomPage && !isAdminPage && userRole === 'Patient' && <Header />}
-        {!isRoomPage && !isAdminPage && userRole === 'Therapist' && <Header2 />}
+        {!isRoomPage && !isAdminPage && !isLoginPage && userRole === 'Patient' && <Header />}
+        {!isRoomPage && !isAdminPage && !isLoginPage && userRole === 'Therapist' && <Header2 />}
         
         <main>
           <Routers socket={socket} />
         </main>
         
-        {!isRoomPage && !isAdminPage && <Footer />}
+        {!isRoomPage && !isAdminPage && !isTextPage && !isLoginPage && <Footer />}
         
         <Routes> 
           <Route path="/room/video/:roomId" element={<Room socket={socket} />} />
