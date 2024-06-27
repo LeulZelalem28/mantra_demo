@@ -86,7 +86,7 @@ export const Home = () => {
               <h2 className='heading text-center '>Providing the best medical servies</h2>
               <p className='text__para text'>Unmathced mental health care, with top quality professionals</p>
             </div>
-            <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 lg:gap-[30px] mt-[30px] lg:mt-[55px]'>
+            <div className='grid grid-cols-1 md:grid-cols-2  gap-5  mt-[30px] lg:mt-[55px]'>
               <div className='py-[30px] px-5'>
                 <div className='flex items-center justify-center'>
                   <img src={icon01} alt="" />

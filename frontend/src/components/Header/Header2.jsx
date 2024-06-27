@@ -1,232 +1,159 @@
-import { useEffect, useRef, useState } from 'react';
-import { NavLink, Link, useLocation } from 'react-router-dom';
-import logo from '../../assets/images/logo.png';
-import userImg from '../../assets/images/avatar-icon.png';
-import { BiMenu } from "react-icons/bi";
-import React from 'react';
+import React, { useState } from 'react';
+import { NavLink, useNavigate } from 'react-router-dom';
+import { BiMenu, BiChevronDown } from "react-icons/bi";
 import './Header.css';
-import Button from '@mui/material/Button';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
-import { useNavigate } from 'react-router-dom';
-import { GlobalStateProvider, useGlobalState } from '../../provider/GlobalStateProvider';
+import logo from '../../assets/images/logo.png';
+import { useGlobalState } from '../../provider/GlobalStateProvider';
 
 const navLinks = [
   { path: '/home', display: 'Home' },
-  { path: '/session', display: 'Mysession', dropdown: true },
-  { path: '/appointment', display: 'Appointment', dropdown: true },
+  { path: '/session', display: 'My Sessions', dropdown: true, subLinks: [
+    { path: '/sessions/text', display: 'Text Sessions' },
+    { path: '/sessions/video', display: 'Video Sessions' },
+  ]},
+  { path: '/appointment', display: 'Appointment', dropdown: true, subLinks: [
+    { path: '/appointments/online', display: 'Online Appointments' },
+    { path: '/appointments/in-person', display: 'In-Person Appointments' },
+  ]},
   { path: '/forum', display: 'Forum' },
-  { path: '/resources', display: 'Blog', dropdown: true },
+  { path: '/resources', display: 'Blog', dropdown: true, subLinks: [
+    { path: '/resources', display: 'Resource' },
+    { path: '/myresources', display: 'My Resources' },
+    { path: '/create/resources', display: 'Create Resources' },
+  ]},
+  { path: '/schedule', display: 'Schedule' },
   { path: '/services', display: 'Services' },
-  { path: '/contact', display: 'Contact' },
+ 
+  { path: '/support', display: 'Support', dropdown: true, subLinks: [
+    { path: '#', display: 'Customer Support', supportType: 'Customer' },
+    { path: '#', display: 'Crisis Support', supportType: 'Crisis' },
+  ]},
+  
 ];
 
 const Header = () => {
-  const headerRef = useRef(null);
-  const menuRef = useRef(null);
-  const location = useLocation();
-  const [anchorEl, setAnchorEl] = useState(null);
-  const [anchorElTwo, setAnchorElTwo] = useState(null);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState({});
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const {setAccessToken, setUserRole, setUserName} = useGlobalState()
-  const id = localStorage.getItem('userId')
-
-  const open = Boolean(anchorEl);
-  const openTwo = Boolean(anchorElTwo);
+  const { setAccessToken, setUserRole, setUserName } = useGlobalState();
+  const { accessToken } = useGlobalState();
+  const userId = localStorage.getItem('userId');
 
   const handleLogout = () => {
-    // Clearing local storage
     setAccessToken('');
     setUserRole('');
     setUserName('');
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('roles');
-    localStorage.removeItem('username');
-    // Redirecting to /login
+    localStorage.clear();
     navigate('/login');
   };
 
-  const handleStickyHeader = () => {
-    window.addEventListener('scroll', () => {
-      if (document.body.scrollTop > 80 || document.documentElement.scrollTop > 80) {
-        headerRef.current.classList.add('sticky__header');
+  const handleSupportClick = async (supportType) => {
+    setLoading(true);
+    try {
+      const response = await fetch(`http://localhost:3500/customerAndCrisisSupportSession/type/${supportType}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessToken}`
+        }
+      });
+      console.log('response', response.status)
+      if (response.status === 404) {
+        const createResponse = await fetch(`http://localhost:3500/customerAndCrisisSupportSession/create/${supportType}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${accessToken}`
+          },
+          body: JSON.stringify(),
+        });
+
+        if (createResponse.ok) {
+          const newSession = await createResponse.json();
+          console.log('New session created:', newSession);
+          navigate(`/support/${newSession.sessionId}`);
+        } else {
+          console.error('Failed to create new session');
+        }
       } else {
-        headerRef.current.classList.remove('sticky__header');
+        const sessions = await response.json();
+        console.log('Existing sessions:', sessions);
+        if (sessions.length > 0) {
+          const existingSessionId = sessions[0].sessionId;
+          navigate(`/support/${existingSessionId}`);
+        }
       }
-    });
+    } catch (error) {
+      console.error('Error fetching support sessions:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  useEffect(() => {
-    handleStickyHeader();
-    return () => window.removeEventListener('scroll', handleStickyHeader);
-  }, []);
 
-  const toggleMenu = () => menuRef.current.classList.toggle('show__menu');
-
-  const handleMenuClick = (event) => {
-    setAnchorEl(event.currentTarget);
+  const toggleMenu = () => {
+    setMenuOpen(!menuOpen);
   };
 
-  const handleMenuClose = () => {
-    setAnchorEl(null);
+  const toggleDropdown = (index) => {
+    setDropdownOpen((prevState) => ({
+      ...prevState,
+      [index]: !prevState[index],
+    }));
   };
-
-  const handleMenuClickTwo = (event) => {
-    setAnchorElTwo(event.currentTarget);
-  };
-
-  const handleMenuCloseTwo = () => {
-    setAnchorElTwo(null);
-  };
-
-  if (location.pathname === '/login') {
-    return null;
-  }
 
   return (
-    <header className="header flex items-center" ref={headerRef}>
-      <div className="container">
-        <div className="flex items-center justify-between">
-          <div className="navigation" ref={menuRef} onClick={toggleMenu}>
-            <ul className="menu flex items-center gap-[2.7rem]">
+    <header className="custom-header">
+      <div className="custom-container">
+        <div className="custom-flex custom-justify-between custom-items-center">
+          <div className="custom-logo">
+            <p className="custom-logo__text">MantraCare</p>
+          </div>
+          <nav className={`custom-nav ${menuOpen ? 'custom-nav--open' : ''}`}>
+            <ul className="custom-nav__list">
               {navLinks.map((link, index) => (
-                <li className="relative" key={index}>
-                  {link.dropdown ? (
-                    <>
-                      <Button
-                        id={`basic-button-${index}`}
-                        aria-controls={
-                          (open && link.path === '/appointment') || (openTwo && link.path === '/session') || (openTwo && link.path === '/resources')
-                            ? 'basic-menu'
-                            : undefined
-                        }
-                        aria-haspopup="true"
-                        aria-expanded={
-                          (open && link.path === '/appointment') || (openTwo && link.path === '/session') ||(openTwo && link.path === '/resources')
-                            ? 'true'
-                            : undefined
-                        }
-                        onClick={(event) => {
-                          if (link.path === '/appointment') {
-                            handleMenuClick(event, link.path);
-                          } else if (link.path === '/session' || link.path === '/resources') {
-                            handleMenuClickTwo(event, link.path);
-                          }
-                        }}
-                      >
-                        {link.display}
-                      </Button>
-                      <Menu
-                        id="basic-menu"
-                        anchorEl={link.path === '/appointment' ? anchorEl : anchorElTwo}
-                        open={link.path === '/appointment' ? open : openTwo}
-                        onClose={link.path === '/appointment' ? handleMenuClose : handleMenuCloseTwo}
-                        MenuListProps={{
-                          'aria-labelledby': `basic-button-${index}`,
-                        }}
-                      >
-                        {link.path === '/session' && (
-                          <>
-                            <MenuItem onClick={handleMenuCloseTwo}>
-                              <NavLink to="/sessions/text" className="menu-link">
-                                Text Sessions
-                              </NavLink>
-                            </MenuItem>
-                            <MenuItem onClick={handleMenuCloseTwo}>
-                              <NavLink to="/sessions/video" className="menu-link">
-                                Video Sessions
-                              </NavLink>
-                            </MenuItem>
-                          </>
-                        )}
-                        {link.path === '/appointment' && (
-                          <>
-                            <MenuItem onClick={handleMenuClose}>
-                              <NavLink to="/appointments/online" className="menu-link">
-                                Online Appointments
-                              </NavLink>
-                            </MenuItem>
-                            <MenuItem onClick={handleMenuClose}>
-                              <NavLink to="/appointments/in-person" className="menu-link">
-                                In-Person Appointments
-                              </NavLink>
-                            </MenuItem>
-                          </>
-                        )}
-                        {link.path === '/resources' && (
-                          <>
-                            <MenuItem onClick={handleMenuCloseTwo}>
-                              <NavLink to="/resources" className="menu-link">
-                                Resource
-                              </NavLink>
-                            </MenuItem>
-                            <MenuItem onClick={handleMenuCloseTwo}>
-                              <NavLink to="/myresources" className="menu-link">
-                                My Resources
-                              </NavLink>
-                            </MenuItem>
-                            <MenuItem onClick={handleMenuCloseTwo}>
-                              <NavLink to="/create/resources" className="menu-link">
-                                Create Resources
-                              </NavLink>
-                            </MenuItem>
-                            <MenuItem onClick={handleMenuCloseTwo}>
-                              <NavLink to="/resources/:id/update" className="menu-link">
-                                Update Resources
-                              </NavLink>
-                            </MenuItem>
-                          </>
-                        )}
-                      </Menu>
-                    </>
-                  ) : (
-                    <NavLink
-                      to={link.path}
-                      className={(navClass) =>
-                        navClass.isActive
-                          ? 'text-primaryColor text-[16px] leading-7 font-[600]'
-                          : 'text-textColor text-[16px] leading-7 font-[500] hover:text-primaryColor'
-                      }
-                    >
+                <li key={index} className="custom-nav__item">
+                  {!link.dropdown ? (
+                    <NavLink to={link.path} className="custom-nav__link" onClick={() => setMenuOpen(false)}>
                       {link.display}
                     </NavLink>
+                  ) : (
+                    <>
+                      <button onClick={() => toggleDropdown(index)} className="custom-nav__link custom-nav__dropdown-link">
+                        {link.display} <BiChevronDown />
+                      </button>
+                      <ul className={`custom-dropdown ${dropdownOpen[index] ? 'custom-dropdown--open' : ''}`}>
+                        {link.subLinks.map((subLink, subIndex) => (
+                          <li key={subIndex} className="custom-dropdown__item">
+                            {subLink.supportType ? (
+                              <button onClick={() => handleSupportClick(subLink.supportType)} className="custom-dropdown__link">
+                                {subLink.display}
+                              </button>
+                            ) : (
+                              <NavLink to={subLink.path} className="custom-dropdown__link" onClick={() => setMenuOpen(false)}>
+                                {subLink.display}
+                              </NavLink>
+                            )}
+                          </li>
+                        ))}
+                      </ul>
+                    </>
                   )}
                 </li>
               ))}
-              <li>
-                <NavLink
-                  to={`/therapists/profile/${id}`}
-                  className={(navClass) =>
-                    navClass.isActive
-                      ? 'text-primaryColor text-[16px] leading-7 font-[600]'
-                      : 'text-textColor text-[16px] leading-7 font-[500] hover:text-primaryColor'
-                  }
-                >
-                  My Profile
+              <li className="custom-nav__item">
+                <NavLink to={`/therapists/profile/${userId}`} className="custom-nav__link" onClick={() => setMenuOpen(false)}>
+                  Profile
                 </NavLink>
               </li>
             </ul>
-          </div>
-
-          <div className="flex items-center gap-4">
-            <div className="hidden">
-              <Link to="/">
-                <figure className="w-[35px] h-[35px] rounded-full cursor-pointer">
-                  <img src={userImg} className="w-full rounded-full" alt="User Avatar" />
-                </figure>
-              </Link>
-            </div>
-
-            <div>
-                
-                <button onClick={handleLogout} className="bg-primaryColor py-2 px-6 text-white font-[600] h-[44px] flex items-center justify-center rounded-[50px]">
-                  Logout
-                </button>
-              
-            </div>
-            <span className="md:hidden" onClick={toggleMenu}>
-              <BiMenu className="w-6 h-6 cursor-pointer" />
-            </span>
+          </nav>
+          <div className="custom-flex custom-items-center custom-gap-4">
+            <button onClick={handleLogout} className="custom-btn custom-btn--primary">
+              Logout
+            </button>
+            <BiMenu className="custom-menu-icon" onClick={toggleMenu} />
           </div>
         </div>
       </div>

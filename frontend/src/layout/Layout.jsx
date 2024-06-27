@@ -13,6 +13,7 @@ const socket = io('http://localhost:3500');
 
 const Layout = () => {
   const userRole = localStorage.getItem('roles');
+  console.log('hii', userRole)
   const { pathname } = useLocation(); 
 
   const isRoomPage = pathname.startsWith('/room/video/');

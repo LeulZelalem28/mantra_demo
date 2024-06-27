@@ -1,133 +1,82 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { FaTrash } from 'react-icons/fa';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import './CreateCustomerPage.css';
+import { css } from '@emotion/react';
+import ClipLoader from 'react-spinners/ClipLoader';
+import './CustomerSupportPage.css';
 
-const CreateCustomerPage = () => {
-  const [formData, setFormData] = useState({
-    username: '',
-    password: '',
-    email: '',
-    name: '',
-    dateOfBirth: '',
-    phoneNumber: '',
-  });
+const CustomerAndCrisisSupportPage = () => {
+  const [supports, setSupports] = useState([]);
+  const [supportCount, setSupportCount] = useState(0);
   const [loading, setLoading] = useState(false);
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    const formDataToSubmit = new FormData();
-    formDataToSubmit.append('username', formData.username);
-    formDataToSubmit.append('password', formData.password);
-    formDataToSubmit.append('email', formData.email);
-    formDataToSubmit.append('name', formData.name);
-    formDataToSubmit.append('dateOfBirth', formData.dateOfBirth);
-    formDataToSubmit.append('phoneNumber', formData.phoneNumber);
-
-    try {
-      const response = await fetch('http://localhost:3500/customerAndCrisisSupport', {
-        method: 'POST',
-        body: formDataToSubmit,
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to create customer');
+  useEffect(() => {
+    const fetchSupports = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch('http://localhost:3500/customerandcrisissupport');
+        const data = await response.json();
+        setSupports(data.customerAndCrisisSupport);
+        setSupportCount(data.count);
+        
+        toast.success('Customer and Crisis Support fetched successfully!');
+      } catch (error) {
+        toast.error('Failed to fetch customer and crisis support');
+        console.error('Failed to fetch customer and crisis support', error);
+      } finally {
+        setLoading(false);
       }
+    };
 
-      toast.success('Customer created successfully');
+    fetchSupports();
+  }, []);
+
+  const handleDelete = async (supportId) => {
+    try {
+      await fetch(`http://localhost:3500/customerandcrisissupport/${supportId}`, { method: 'DELETE' });
+      setSupports(supports.filter(support => support.customerSupportId !== supportId));
+      setSupportCount(supportCount - 1);
+      toast.success('Customer and Crisis Support deleted successfully!');
     } catch (error) {
-      toast.error('Failed to create customer');
-    } finally {
-      setLoading(false);
+      toast.error('Failed to delete customer and crisis support');
+      console.error('Failed to delete customer and crisis support', error);
     }
   };
 
+  const override = css`
+    display: block;
+    margin: 0 auto;
+  `;
+
   return (
-    <div className="admin-create-cus">
+    <div className="admin-support-page">
+      <h2>Customer and Crisis Support ({supportCount})</h2>
+      <div className="clip-loader">
+        <ClipLoader color="#007bff" loading={loading} css={override} size={35} />
+      </div>
+      <div className="admin-support-list">
+        {supports.map(support => (
+          <div key={support.customerSupportId} className="admin-support-item">
+            <div className="admin-support-item-info">
+              <p><strong>Username:</strong> {support.username}</p>
+              <p><strong>Email:</strong> {support.email}</p>
+              <p><strong>User ID:</strong> {support.userId}</p>
+              <p><strong>Phone Number:</strong> {support.phoneNumber}</p>
+              <p><strong>Role:</strong> {support.role}</p>
+            </div>
+            <button
+              className="admin-support-delete-button"
+              onClick={() => handleDelete(support.customerSupportId)}
+            >
+              <FaTrash />
+            </button>
+          </div>
+        ))}
+      </div>
       <ToastContainer />
-      <h2>Create Customer</h2>
-      <form onSubmit={handleSubmit}>
-        <div className="admin-create-cus-form-group">
-          <label htmlFor="username">Username</label>
-          <input
-            type="text"
-            id="username"
-            name="username"
-            value={formData.username}
-            onChange={handleInputChange}
-            required
-          />
-        </div>
-        <div className="admin-create-cus-form-group">
-          <label htmlFor="password">Password</label>
-          <input
-            type="password"
-            id="password"
-            name="password"
-            value={formData.password}
-            onChange={handleInputChange}
-            required
-          />
-        </div>
-        <div className="admin-create-cus-form-group">
-          <label htmlFor="email">Email</label>
-          <input
-            type="email"
-            id="email"
-            name="email"
-            value={formData.email}
-            onChange={handleInputChange}
-            required
-          />
-        </div>
-        <div className="admin-create-cus-form-group">
-          <label htmlFor="name">Name</label>
-          <input
-            type="text"
-            id="name"
-            name="name"
-            value={formData.name}
-            onChange={handleInputChange}
-            required
-          />
-        </div>
-        <div className="admin-create-cus-form-group">
-          <label htmlFor="dateOfBirth">Date of Birth</label>
-          <input
-            type="date"
-            id="dateOfBirth"
-            name="dateOfBirth"
-            value={formData.dateOfBirth}
-            onChange={handleInputChange}
-            required
-          />
-        </div>
-        <div className="admin-create-cus-form-group">
-          <label htmlFor="phoneNumber">Phone Number</label>
-          <input
-            type="tel"
-            id="phoneNumber"
-            name="phoneNumber"
-            value={formData.phoneNumber}
-            onChange={handleInputChange}
-            required
-          />
-        </div>
-        <button type="submit" className="admin-create-cus-btn" disabled={loading}>
-          {loading ? 'Creating...' : 'Create Customer'}
-        </button>
-      </form>
     </div>
   );
 };
 
-export default CreateCustomerPage;
+export default CustomerAndCrisisSupportPage;

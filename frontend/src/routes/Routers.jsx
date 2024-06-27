@@ -36,6 +36,8 @@ import ResourceDetailPage from '../blog/ResourceDetailPage'
 import MyResourcePage from '../blog/MyResourcePage'
 import Room from '../Room'
 import TextChat from '../TextChat/TextChat'
+import TextChat2 from '../CustomerAndCrisisSupport/TextChat'
+import TherapistScheduler from '../schedule/scheduler';
 import Schedule from '../pages/Doctors/SidePanel';
 
 
@@ -64,6 +66,8 @@ const Routers = ({ socket }) => {
       <Route path="/create/resources" element={<CreateResource accessToken={accessToken} />} />
       <Route path="/myresources" element={<MyResourcePage username={username} accessToken={accessToken} />} />
       <Route path="/room/text/:roomId" element={<TextChat userRole={userRole} username={username} accessToken={accessToken} socket={socket} />} />
+      <Route path="/support/:roomId" element={<TextChat2 userRole={userRole} username={username} accessToken={accessToken} socket={socket} />} />
+      <Route path="/schedule" element={<TherapistScheduler userRole={userRole} username={username} accessToken={accessToken} />} />
       {/* <Route path="/schedule" element={<Schedule />} /> */}
 
     {/* <Route path="/users/profiles/me" element={<Dashboard/>}/> */}

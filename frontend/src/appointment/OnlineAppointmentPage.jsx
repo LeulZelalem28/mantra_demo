@@ -135,7 +135,10 @@ const OnlineAppointmentsPage = ({accessToken}) => {
             body: JSON.stringify({
               patientInfo: appointment.patientInfo,
               therapistId: appointment.therapistId,
-              sessionStartTime: new Date()
+              sessionStartTime: new Date(),
+              therapistName: appointment.therapistName,
+              sessionTitle: appointment.sessionTitle,
+              sessionType: appointment.sessionType
             }),
           });
     
